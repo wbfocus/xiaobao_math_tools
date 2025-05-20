@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小宝数学工具箱 🧮</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; /* 类似Windows的字体 */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            min-height: 100vh;
+            background-color: #f0f0f0; /* 整体背景色，类似7-Zip */
+            color: #333;
+        }
+
+        .sidebar {
+            width: 220px; /* 左侧导航栏宽度 */
+            background-color: #e6e6e6; /* 导航栏背景色 */
+            padding: 15px;
+            border-right: 1px solid #ccc;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            font-size: 20px;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #bbb;
+        }
+
+        .nav-menu ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-menu li {
+            margin-bottom: 5px;
+        }
+
+        .nav-menu a, .nav-menu .category-toggle {
+            display: block;
+            padding: 8px 10px;
+            text-decoration: none;
+            color: #000; /* 7-Zip 链接颜色 */
+            border-radius: 3px;
+            transition: background-color 0.2s ease;
+            cursor: pointer;
+        }
+
+        .nav-menu a:hover, .nav-menu .category-toggle:hover {
+            background-color: #d4d4d4;
+        }
+        
+        .nav-menu .category-toggle.active { /* 被选中的分类 */
+             background-color: #c0c0c0;
+             font-weight: bold;
+        }
+
+        .nav-menu .submenu {
+            list-style-type: none;
+            padding-left: 20px; /* 子菜单缩进 */
+            margin-top: 5px;
+            display: none; /* 默认收起 */
+        }
+        
+        .nav-menu .submenu.level2 {
+            padding-left: 35px; /* 二级子菜单进一步缩进 */
+        }
+
+        .nav-menu .submenu a {
+            font-size: 0.9em;
+            padding: 6px 10px;
+        }
+        
+        .nav-menu .category-toggle::before {
+            content: '▸ '; /* 未展开时的箭头 */
+            font-size: 0.8em;
+            margin-right: 4px;
+        }
+
+        .nav-menu .category-toggle.open::before {
+            content: '▾ '; /* 展开时的箭头 */
+        }
+
+
+        .main-content {
+            flex-grow: 1;
+            padding: 25px;
+            background-color: #fff; /* 右侧内容区背景 */
+        }
+
+        .main-content h1 {
+            font-size: 24px;
+            color: #333;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+
+        .tool-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .tool-list li {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 4px;
+        }
+        .tool-list li a {
+            text-decoration: none;
+            color: #0066cc;
+            font-weight: bold;
+        }
+        .tool-list li a:hover {
+            text-decoration: underline;
+        }
+        .tool-list li p {
+            font-size: 0.9em;
+            color: #555;
+            margin-top: 5px;
+            margin-bottom: 0;
+        }
+
+        .content-placeholder {
+            color: #777;
+            font-style: italic;
+        }
+
+        hr.nav-separator {
+            border: 0;
+            height: 1px;
+            background-color: #bbb;
+            margin: 15px 0;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">小宝数学工具箱</div>
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="#" onclick="showContent('home', this)">🏠 主页</a></li>
+                
+                <hr class="nav-separator">
+
+                <li>
+                    <span class="category-toggle" onclick="toggleSubmenu(this)">🧮 数与计算</span>
+                    <ul class="submenu">
+                        <li>
+                            <span class="category-toggle" onclick="toggleSubmenu(this)">➕ 两位数加减法</span>
+                            <ul class="submenu level2">
+                                <li><a href="shuxue.html" target="content_iframe" onclick="setActiveLink(this)">进位退位演示</a></li>
+                                <li><a href="#" onclick="showContent('tool-2digit-practice', this); setActiveLink(this)">口算练习卡</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#" onclick="showContent('tool-count-100', this); setActiveLink(this)">💯 100以内数认识</a></li>
+                        <li><a href="#" onclick="showContent('tool-multiplication-intro', this); setActiveLink(this)">✖️ 乘法启蒙</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <span class="category-toggle" onclick="toggleSubmenu(this)">🧩 图形与几何</span>
+                    <ul class="submenu">
+                        <li><a href="#" onclick="showContent('tool-shapes-recognition', this); setActiveLink(this)">认识平面图形</a></li>
+                        <li><a href="#" onclick="showContent('tool-shapes-拼图', this); setActiveLink(this)">图形拼组游戏</a></li>
+                        <li><a href="#" onclick="showContent('tool-observe-objects', this); setActiveLink(this)">观察物体（不同角度）</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <span class="category-toggle" onclick="toggleSubmenu(this)">📊 数据与分类</span>
+                    <ul class="submenu">
+                        <li><a href="#" onclick="showContent('tool-data-classification', this); setActiveLink(this)">物品分类练习</a></li>
+                        <li><a href="#" onclick="showContent('tool-simple-stats', this); setActiveLink(this)">简单统计图表</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <span class="category-toggle" onclick="toggleSubmenu(this)">📏 量与计量</span>
+                    <ul class="submenu">
+                        <li><a href="#" onclick="showContent('tool-time-recognition', this); setActiveLink(this)">认识时间（整时半时）</a></li>
+                        <li><a href="#" onclick="showContent('tool-money-recognition', this); setActiveLink(this)">认识人民币</a></li>
+                    </ul>
+                </li>
+                
+                <hr class="nav-separator">
+                
+                <li><a href="#" onclick="showContent('settings', this); setActiveLink(this)">⚙️ 设置与其他</a></li>
+
+            </ul>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <iframe name="content_iframe" id="content_iframe_id" style="width:100%; height: calc(100vh - 50px); border:none;" srcdoc="<h1>欢迎来到小宝的数学工具箱！</h1><p class='content-placeholder'>请从左侧选择一个工具或分类开始学习和探索吧！🥳</p>"></iframe>
+    </div>
+
+    <script>
+        let currentActiveLink = null;
+
+        function setActiveLink(element) {
+            if (currentActiveLink) {
+                currentActiveLink.style.fontWeight = 'normal';
+                currentActiveLink.style.backgroundColor = ''; // 恢复默认背景
+            }
+            if (element) {
+                element.style.fontWeight = 'bold';
+                element.style.backgroundColor = '#c0c0c0'; // 设置为激活背景色
+                currentActiveLink = element;
+            }
+        }
+        
+        function toggleSubmenu(element) {
+            const submenu = element.nextElementSibling;
+            if (submenu && submenu.classList.contains('submenu')) {
+                if (submenu.style.display === "block") {
+                    submenu.style.display = "none";
+                    element.classList.remove("open");
+                } else {
+                    submenu.style.display = "block";
+                    element.classList.add("open");
+                }
+            }
+            // 如果是顶级分类点击，也设置激活状态
+            if (!element.parentElement.parentElement.classList.contains('submenu')) {
+                 setActiveLink(element);
+            }
+        }
+
+        // 用于在iframe中显示简单文本内容 (如果不想用target iframe)
+        // 如果所有工具都是独立html页面，并且用target="content_iframe"打开，则这个函数可以简化或移除
+        function showContent(contentId, linkElement) {
+            setActiveLink(linkElement); // 设置点击的链接为激活状态
+            const iframe = document.getElementById('content_iframe_id');
+            let htmlContent = `<h1>内容区</h1><p class='content-placeholder'>这里显示 <strong>${contentId}</strong> 的内容。</p>`;
+
+            if (contentId === 'home') {
+                htmlContent = `<h1>欢迎来到小宝的数学工具箱！</h1><p class='content-placeholder'>请从左侧选择一个工具或分类开始学习和探索吧！🥳</p>`;
+            } else if (contentId === 'tool-2digit-practice') {
+                htmlContent = `<h1>两位数加减法 - 口算练习卡</h1>
+                               <p>这里可以放一些动态生成的口算题，或者一个简单的练习界面。</p>
+                               <ul class="tool-list">
+                                   <li><a href="#">开始练习</a><p>随机生成20道两位数加减整十数或一位数的题目。</p></li>
+                               </ul>`;
+            } else if (contentId === 'tool-shapes-recognition') {
+                 htmlContent = `<h1>认识平面图形</h1>
+                               <p>展示各种平面图形（长方形、正方形、三角形、圆形、平行四边形）及其特点。</p>
+                               <ul class="tool-list">
+                                   <li><a href="#">图形卡片展示</a><p>点击查看不同图形的图片和名称。</p></li>
+                                   <li><a href="#">找图形游戏</a><p>在一堆物品中找出特定形状的物体。</p></li>
+                               </ul>`;
+            }
+            // ... 您可以为其他 contentId 添加更多定制内容 ...
+            else {
+                 // 默认情况下，如果链接不是直接指向一个html文件，就显示一个提示
+                // 对于直接用 a href="xxx.html" target="content_iframe" 的链接，不需要在这里处理其内容
+                if (!linkElement.href.endsWith('.html')) {
+                     htmlContent = `<h1>${linkElement.textContent.replace('▸ ','').replace('▾ ','')}</h1>
+                                   <p class='content-placeholder'>这里将是关于“${linkElement.textContent.replace('▸ ','').replace('▾ ','')}”的工具或内容。</p>
+                                   <p>您可以将实际的工具页面链接到此导航项。</p>`;
+                } else {
+                    // 如果是直接链接到html，则iframe的src会处理，这里不需要改变htmlContent
+                    return; 
+                }
+            }
+            iframe.setAttribute('srcdoc', htmlContent);
+        }
+
+        // 页面加载时，默认选中主页并显示主页内容
+        document.addEventListener('DOMContentLoaded', () => {
+            const homeLink = document.querySelector('.nav-menu a[onclick*="home"]');
+            if (homeLink) {
+                setActiveLink(homeLink);
+                // showContent('home', homeLink); // iframe的srcdoc已经设置了初始内容
+            }
+        });
+    </script>
+</body>
+</html>
