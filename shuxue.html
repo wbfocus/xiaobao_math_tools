@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>小宝的数学魔法屋 ✨ (分步)</title>
     <style>
-        /* CSS样式与上一个版本基本相同，这里省略以减少篇幅 */
-        /* 您可以将上一个版本的CSS代码复制到这里 */
         body {
             font-family: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', sans-serif;
             line-height: 1.6;
@@ -169,7 +167,7 @@
             font-size: 17px;
             color: #4a4a4a;
         }
-        .highlight-step { /* 这个类可以暂时不用，因为是分步的 */
+        .highlight-step { 
             background-color: #ffffcc;
             padding: 3px;
             border-radius: 3px;
@@ -178,6 +176,51 @@
             font-size: 20px;
             margin-right: 5px;
         }
+
+        /* 新增的CSS for footer-notes */
+        .footer-notes {
+            margin-top: 30px;
+            padding: 20px; 
+            background-color: #fff9e6; 
+            border-top: 3px dashed #ffcc80; 
+            border-radius: 10px; 
+            font-size: 15px; 
+            color: #555; 
+            text-align: left;
+        }
+        .footer-notes h4 {
+            margin-top: 0;
+            color: #ff8c42; 
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .footer-notes ul {
+            list-style-type: none; 
+            padding-left: 0;
+            margin-top: 5px;
+            margin-bottom: 10px;
+        }
+        .footer-notes li {
+            margin-bottom: 8px; 
+            padding-left: 25px; 
+            position: relative; 
+        }
+        .footer-notes li::before { 
+            content: "🔹"; 
+            color: #4682B4; 
+            position: absolute;
+            left: 0;
+            font-size: 16px;
+        }
+        .footer-notes strong {
+            color: #ff6b6b; 
+        }
+        .footer-notes p:last-child { 
+            margin-top: 10px;
+            font-style: italic;
+            color: #666;
+        }
+
     </style>
 </head>
 <body>
@@ -198,7 +241,7 @@
             </div>
             <div class="input-group">
                 <label for="num2">第二个数:</label>
-                <input type="number" id="num2" min="1" max="90" value="8"> <!-- 改为一位数方便演示退位 -->
+                <input type="number" id="num2" min="1" max="90" value="8">
             </div>
         </div>
 
@@ -214,7 +257,6 @@
                 <table class="vertical-form">
                     <thead>
                         <tr>
-                            <!-- 用于放置进位/借位标记的td，用CSS定位 -->
                             <td style="position: relative;"><span id="carrySpace" class="carry-digit"></span></td>
                             <td style="position: relative;">
                                 <span id="vf-num1-tens"></span>
@@ -250,7 +292,21 @@
                 </div>
             </div>
         </div>
-    </div>
+
+        <div class="footer-notes">
+            <h4><span class="emoji">📖</span> 工具适用范围说明：</h4>
+            <p>小宝你好呀！这个魔法计算器可以帮你练习下面这些算式哦：</p>
+            <ul>
+                <li><strong>两位数 加/减 整十数</strong> (比如: 34 + 20, 56 - 30)</li>
+                <li><strong>两位数 加 一位数 (个位不进位)</strong> (比如: 25 + 3)</li>
+                <li><strong>两位数 加 一位数 (个位要进位)</strong> (比如: 24 + 8)</li>
+                <li><strong>两位数 减 一位数 (个位不退位)</strong> (比如: 48 - 5)</li>
+                <li><strong>两位数 减 一位数 (个位要退位)</strong> (比如: 32 - 6)</li>
+            </ul>
+            <p>输入数字的时候，要看看是不是这些类型的算式，这样魔法才能成功施展哦！加油！😉</p>
+        </div>
+
+    </div> <!-- class="container" 的结束标签 -->
 
     <script>
         const num1Input = document.getElementById('num1');
@@ -266,8 +322,8 @@
         const vfResultOnes = document.getElementById('vf-result-ones');
         
         const carrySpace = document.getElementById('carrySpace');
-        const tempTensDisplay = document.getElementById('temp-tens-display'); // 用于显示退位后十位的新值
-        const tempOnesDisplay = document.getElementById('temp-ones-display'); // 用于显示退位后个位的新值
+        const tempTensDisplay = document.getElementById('temp-tens-display'); 
+        const tempOnesDisplay = document.getElementById('temp-ones-display'); 
 
         const explanationText = document.getElementById('explanationText');
         const startButton = document.getElementById('startButton');
@@ -278,10 +334,9 @@
         let currentStep = 0;
         let steps = [];
         let finalResult = 0;
-        let originalNum1TensText, originalNum1OnesText; // 保存原始数字，用于退位划线后恢复
+        let originalNum1TensText, originalNum1OnesText; 
 
         function clearPreviousMarks() {
-            // 清理临时标记和样式
             carrySpace.textContent = '';
             carrySpace.style.opacity = 0;
             tempTensDisplay.textContent = '';
@@ -291,7 +346,6 @@
 
             vfNum1Tens.classList.remove('strikethrough');
             vfNum1Ones.classList.remove('strikethrough');
-             // 恢复原始数字显示（如果之前被划掉了）
             if (originalNum1TensText !== undefined) vfNum1Tens.textContent = originalNum1TensText;
             if (originalNum1OnesText !== undefined) vfNum1Ones.textContent = originalNum1OnesText;
 
@@ -332,22 +386,21 @@
 
 
         function displayNextStep() {
-            clearPreviousMarks(); // 在显示新步骤前清除旧标记
+            clearPreviousMarks(); 
 
             if (currentStep < steps.length) {
                 const step = steps[currentStep];
                 explanationText.innerHTML = step.explanation;
                 if (step.action) {
-                    // 在执行action前，确保原始数字已保存，以防action中修改了它们
                     if (originalNum1TensText === undefined) originalNum1TensText = vfNum1Tens.textContent;
                     if (originalNum1OnesText === undefined) originalNum1OnesText = vfNum1Ones.textContent;
                     step.action();
                 }
                 currentStep++;
-                if (currentStep === steps.length) { // 所有计算步骤完成，下一步是显示最终结果
+                if (currentStep === steps.length) { 
                     nextStepButton.textContent = "看结果咯 🏆";
                 }
-            } else { // 所有步骤（包括显示结果的伪步骤）都已完成
+            } else { 
                 vfResultTens.textContent = Math.floor(finalResult / 10) === 0 && finalResult < 10 && finalResult !== 0 ? '' : Math.floor(finalResult / 10);
                 vfResultOnes.textContent = finalResult % 10;
                 explanationText.innerHTML += `<p><span class="emoji">🎉</span> 算好啦！答案是 <strong>${finalResult}</strong>！你真棒！</p>`;
@@ -357,13 +410,12 @@
         }
 
         function startDemonstration() {
-            resetCalculation(); // 重置状态
+            resetCalculation(); 
 
             const num1 = num1Input.valueAsNumber;
             const operator = operatorSelect.value;
             const num2 = num2Input.valueAsNumber;
 
-            // --- 输入验证 (与之前版本相同) ---
             if (isNaN(num1) || isNaN(num2)) {
                 explanationText.innerHTML = '<p><span class="emoji">🤔</span> 哦呀，要输入数字才能计算哦！</p>';
                 return;
@@ -388,11 +440,10 @@
             const n2TensVal = n2IsTensType ? num2 / 10 : 0;
             const n2OnesVal = n2IsTensType ? 0 : num2;
 
-            // 填充竖式初始数字
             vfNum1Tens.textContent = n1TensVal;
-            originalNum1TensText = n1TensVal.toString(); // 保存原始值
+            originalNum1TensText = n1TensVal.toString(); 
             vfNum1Ones.textContent = n1OnesVal;
-            originalNum1OnesText = n1OnesVal.toString(); // 保存原始值
+            originalNum1OnesText = n1OnesVal.toString(); 
 
             vfOperator.textContent = operator;
             if (n2IsTensType) {
@@ -403,12 +454,11 @@
                 vfNum2Ones.textContent = n2OnesVal;
             }
             
-            steps = []; // 清空旧的步骤
+            steps = []; 
 
-            // --- 生成计算步骤 (与之前版本类似，但action中做视觉调整) ---
             if (operator === '+') {
                 finalResult = num1 + num2;
-                if (n2IsTensType) { // 两位数 + 整十数
+                if (n2IsTensType) { 
                     steps.push({
                         explanation: `<p><span class="emoji">✨</span> 我们来算 ${num1} + ${num2}！</p><p><span class="emoji">👇</span> 先看个位：${n1OnesVal} + 0 = ${n1OnesVal}。把 ${n1OnesVal} 写在结果的个位上。</p>`,
                         action: () => { vfResultOnes.textContent = n1OnesVal; vfNum1Ones.style.color = '#ff6b6b'; vfNum2Ones.style.color = '#ff6b6b';}
@@ -417,12 +467,12 @@
                         explanation: `<p><span class="emoji">👉</span> 再看十位：${n1TensVal}个十 + ${n2TensVal}个十 = ${n1TensVal + n2TensVal}个十。把 ${n1TensVal + n2TensVal} 写在结果的十位上。</p>`,
                         action: () => { vfResultTens.textContent = n1TensVal + n2TensVal; vfNum1Tens.style.color = '#ff6b6b'; vfNum2Tens.style.color = '#ff6b6b';}
                     });
-                } else { // 两位数 + 一位数
+                } else { 
                     steps.push({
                         explanation: `<p><span class="emoji">✨</span> 我们来算 ${num1} + ${num2}！</p><p><span class="emoji">👇</span> 先从个位开始加：${n1OnesVal} + ${n2OnesVal} = ${n1OnesVal + n2OnesVal}。</p>`,
                         action: () => { vfNum1Ones.style.color = '#ff6b6b'; vfNum2Ones.style.color = '#ff6b6b'; }
                     });
-                    if (n1OnesVal + n2OnesVal >= 10) { // 有进位
+                    if (n1OnesVal + n2OnesVal >= 10) { 
                         const onesSum = n1OnesVal + n2OnesVal;
                         const resultOnesDigit = onesSum % 10;
                         steps.push({
@@ -438,10 +488,10 @@
                             action: () => {
                                 vfResultTens.textContent = n1TensVal + 1;
                                 vfNum1Tens.style.color = '#ff6b6b';
-                                carrySpace.style.color = '#ff6b6b'; // 高亮进位
+                                carrySpace.style.color = '#ff6b6b'; 
                             }
                         });
-                    } else { // 无进位
+                    } else { 
                          steps.push({
                             explanation: `<p><span class="emoji">😊</span> 个位是 ${n1OnesVal + n2OnesVal}，没有满十，直接写在结果的个位上！</p>`,
                             action: () => { vfResultOnes.textContent = n1OnesVal + n2OnesVal; }
@@ -452,9 +502,9 @@
                         });
                     }
                 }
-            } else { // operator === '-'
+            } else { 
                 finalResult = num1 - num2;
-                if (n2IsTensType) { // 两位数 - 整十数
+                if (n2IsTensType) { 
                      steps.push({
                         explanation: `<p><span class="emoji">✨</span> 我们来算 ${num1} - ${num2}！</p><p><span class="emoji">👇</span> 先看个位：${n1OnesVal} - 0 = ${n1OnesVal}。把 ${n1OnesVal} 写在结果的个位上。</p>`,
                         action: () => { vfResultOnes.textContent = n1OnesVal; vfNum1Ones.style.color = '#ff6b6b'; vfNum2Ones.style.color = '#ff6b6b';}
@@ -463,17 +513,17 @@
                         explanation: `<p><span class="emoji">👉</span> 再看十位：${n1TensVal}个十 - ${n2TensVal}个十 = ${n1TensVal - n2TensVal}个十。把 ${n1TensVal - n2TensVal} 写在结果的十位上。</p>`,
                         action: () => { vfResultTens.textContent = n1TensVal - n2TensVal; vfNum1Tens.style.color = '#ff6b6b'; vfNum2Tens.style.color = '#ff6b6b';}
                     });
-                } else { // 两位数 - 一位数
+                } else { 
                     steps.push({
                         explanation: `<p><span class="emoji">✨</span> 我们来算 ${num1} - ${num2}！</p><p><span class="emoji">👇</span> 先从个位开始减：${n1OnesVal} 减 ${n2OnesVal}。</p>`,
                          action: () => { vfNum1Ones.style.color = '#ff6b6b'; vfNum2Ones.style.color = '#ff6b6b'; }
                     });
-                    if (n1OnesVal < n2OnesVal) { // 需要退位
+                    if (n1OnesVal < n2OnesVal) { 
                         steps.push({
                             explanation: `<p><span class="emoji">😮</span> 哎呀！个位 ${n1OnesVal} 不够减 ${n2OnesVal} 呢！</p><p><span class="emoji">➡️</span> 没关系，我们向十位大哥 ${n1TensVal} 借个 <span style="color:#ff6b6b; font-weight:bold;">1</span> (代表1个十)！</p>`,
                             action: () => {
                                 vfNum1Tens.classList.add('strikethrough');
-                                tempTensDisplay.textContent = n1TensVal - 1; // 在被划掉数字的旁边显示新值
+                                tempTensDisplay.textContent = n1TensVal - 1; 
                                 tempTensDisplay.style.opacity = 1;
 
                                 vfNum1Ones.classList.add('strikethrough');
@@ -485,20 +535,24 @@
                             explanation: `<p><span class="emoji">💪</span> 十位 ${n1TensVal} 变成了 ${n1TensVal-1}，个位 ${n1OnesVal} 变成了 ${10+n1OnesVal} (看数字上面的小标记)。</p><p><span class="emoji">👍</span> 现在个位可以减啦：${10+n1OnesVal} - ${n2OnesVal} = ${10+n1OnesVal-n2OnesVal}。把结果写在个位上。</p>`,
                             action: () => {
                                 vfResultOnes.textContent = 10 + n1OnesVal - n2OnesVal;
-                                // 在显示结果后，可以考虑隐藏临时的退位标记，或者让它们淡出
-                                tempTensDisplay.style.opacity = 0.5; // 减淡
-                                tempOnesDisplay.style.opacity = 0.5; // 减淡
+                                tempTensDisplay.style.opacity = 0.5; 
+                                tempOnesDisplay.style.opacity = 0.5; 
                             }
                         });
                         steps.push({
                             explanation: `<p><span class="emoji">👀</span> 十位还剩下 ${n1TensVal-1}个十。把 ${n1TensVal-1} 写在结果的十位上。</p>`,
                             action: () => {
                                 vfResultTens.textContent = n1TensVal - 1;
-                                tempTensDisplay.style.color = '#ff6b6b'; // 高亮退位后的十位
+                                // 高亮退位后的十位，需要确保tempTensDisplay里的值是正确的
+                                // 这里的 tempTensDisplay.style.color 似乎应该作用在 vfResultTens 或者原始的 vfNum1Tens (如果它显示的是退位后的值)
+                                // 暂时保持现状，或者可以高亮 tempTensDisplay 本身
+                                if(tempTensDisplay.textContent !== ''){ // 确保有值才高亮
+                                     tempTensDisplay.style.color = '#ff6b6b';
+                                }
                             }
                         });
 
-                    } else { // 无需退位
+                    } else { 
                         steps.push({
                             explanation: `<p><span class="emoji">😊</span> 个位 ${n1OnesVal} 够减 ${n2OnesVal}，太棒了！ ${n1OnesVal} - ${n2OnesVal} = ${n1OnesVal-n2OnesVal}。把结果写在个位上。</p>`,
                              action: () => { vfResultOnes.textContent = n1OnesVal - n2OnesVal; }
@@ -511,20 +565,18 @@
                 }
             }
 
-            // 准备好后，自动显示第一步的说明
             if (steps.length > 0) {
-                currentStep = 0; // 重置步骤计数器
-                displayNextStep(); // 显示第一步
+                currentStep = 0; 
+                displayNextStep(); 
                 startButton.style.display = 'none';
-                nextStepButton.textContent = "下一步 ➡️"; // 重置按钮文字
+                nextStepButton.textContent = "下一步 ➡️"; 
                 nextStepButton.style.display = 'inline-block';
-                restartButton.style.display = 'none'; // 隐藏重新开始按钮，直到计算完成
-                num1Input.disabled = true; // 计算过程中禁止修改输入
+                restartButton.style.display = 'none'; 
+                num1Input.disabled = true; 
                 operatorSelect.disabled = true;
                 num2Input.disabled = true;
             }
         }
-        // 初始调用一次以设置页面
         resetCalculation();
 
     </script>
